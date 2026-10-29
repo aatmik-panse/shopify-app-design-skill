@@ -72,20 +72,13 @@ For setup that realistically takes longer than a merchant has time for right now
 
 ## The empty state as the onboarding moment
 
-The first time a merchant lands on a list, table, or resource page with nothing in it yet, that blank moment is itself an onboarding opportunity, not a dead end. A first-run empty state should do two things at minimum: clearly explain what will appear here once the merchant acts, and offer one prominent call to action to take that first action (shopify.dev/docs/apps/design/user-experience/onboarding; the Empty state composition is catalogued alongside Setup guide in Shopify's App Home patterns).
+The first time a merchant lands on a list, table, or resource page with nothing in it yet, that blank moment is itself an onboarding opportunity, not a dead end. Use `s-empty-state` (shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/empty-state). Explain what will appear here, and put one prominent action in `primary-action`.
 
 ```
-+--------------------------------------------------+
-|                                                    |
-|                  [ illustration ]                 |
-|                                                    |
-|              No campaigns yet                     |
-|   Campaigns you create will appear here, with      |
-|   send status and open rate at a glance.           |
-|                                                    |
-|              [ Create your first campaign ]        |
-|                                                    |
-+--------------------------------------------------+
+<s-empty-state heading="No campaigns yet">
+  <s-text slot="subheading">Campaigns you create will appear here, with send status and open rate.</s-text>
+  <s-button slot="primary-action" variant="primary">Create campaign</s-button>
+</s-empty-state>
 ```
 
 Get the distinction right, because this is where generic AI-dashboard output usually goes wrong: **a true empty state is not the same thing as a filtered-to-zero state.**
@@ -93,11 +86,11 @@ Get the distinction right, because this is where generic AI-dashboard output usu
 | State | What happened | What the UI should show |
 |---|---|---|
 | True empty state | Nothing exists yet for this merchant (first run, no data created) | Onboarding-style explanation + one prominent CTA to create the first item |
-| Filtered-to-zero state | Data exists, but the current filter/search/sort combination matched nothing | A plain "No results match your filters" message + a "Clear filters" affordance, never onboarding copy |
+| Filtered-to-zero state | Data exists, but the current filter/search/sort combination matched nothing | The same `s-empty-state`, with a plain "No results" line and a Clear filters action, never onboarding copy |
 
 Reusing first-run onboarding copy ("Get started by creating your first campaign") when a merchant has simply filtered their existing 40 campaigns down to zero is confusing and condescending. Check which case you're actually in (is the underlying resource count zero, or is the filtered/searched count zero) before choosing which copy and which action to show (see SKILL.md non-negotiables).
 
-The first-run empty state is also a legitimate place to spend your one signature creative moment for the page (see SKILL.md "spend your boldness in one place"): a bespoke illustration or a small, tasteful entrance animation on that empty state card is real, earned craft, gated behind `prefers-reduced-motion` like any other motion in Register A. Don't spend that same budget again on the setup guide card two inches above it; pick one moment per page.
+The first-run empty state is also a legitimate place to spend your one signature creative moment for the page (see SKILL.md "spend your boldness in one place"): a bespoke illustration in the `graphic` slot, or a small entrance animation, is earned craft, gated behind `prefers-reduced-motion` like any other motion in Register A. Don't spend that same budget again on the setup guide card two inches above it; pick one moment per page.
 
 ## Copy and accessibility specifics for onboarding
 
