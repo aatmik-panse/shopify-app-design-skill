@@ -25,7 +25,7 @@ Bringing Register B into Register A is the single most common and costliest mist
 - An empty state ≠ a filtered-to-zero state — the latter needs "clear filters," not onboarding copy.
 - Copy must survive translation into longer languages (German runs ~30% longer than English) — don't design copy that only fits at English length.
 - Loading skeletons match the shape of the loaded layout, not generic spinners.
-- Cards are a container of last resort, not a reflex — no nested cards, no card for every div.
+- Most content sits in an `s-section` (or a bordered `s-box`). Don't nest sections for decoration. A heading or plain text needs no container.
 
 ## Routing table
 
@@ -33,7 +33,7 @@ Bringing Register B into Register A is the single most common and costliest mist
 |---|---|---|
 | Build/redesign the app's main embedded page (App Home) | `reference/app-home.md`, `reference/layout-and-visual-design.md`, `reference/accessibility.md` | Template choice (Homepage/Index/Details/Settings), Compositions (Setup guide, Metrics card, Empty state, Callout card), and the layout rules (single- vs two-column, containers, spacing) that make a homepage feel native instead of a generic dashboard collage — close with an accessibility pass (contrast, focus order, screen-reader labels) before calling it done |
 | Build an Admin UI Extension (action/block/link/print/configuration) | `reference/admin-extensions.md`, `reference/component-patterns.md` | Target-type constraints differ sharply (blocks can't be hidden, only collapsed via `null`; bundle size caps; API-version-gated React vs `s-*` split) and the validator gotchas are non-obvious |
-| Build a resource index/list page (search, filter, sort, bulk actions) | `reference/layout-and-visual-design.md`, `reference/component-patterns.md` | Index-table composition and full-width-page layout rules live in `layout-and-visual-design.md`; the `s-table` vs `s-grid` vs Index-table decision guide lives in `component-patterns.md` — a distinct task from the App Home row above, which is specifically about the homepage, not a sub-page list view |
+| Build a resource index/list page (search, filter, sort, bulk actions) | `reference/layout-and-visual-design.md`, `reference/component-patterns.md` | Index-table composition and `inlineSize="large"` for wide lists live in `layout-and-visual-design.md`; the `s-table` vs `s-grid` vs Index-table decision guide lives in `component-patterns.md` — a distinct task from the App Home row above, which is specifically about the homepage, not a sub-page list view |
 | First-run / onboarding / setup-guide flows | `reference/onboarding.md` | Hard 5-step cap, dismissibility rules, progress-indicator pattern, and the empty-state-vs-onboarding distinction that's easy to blur |
 | Forms / settings pages | `reference/forms.md`, `reference/accessibility.md` | Save Bar (not auto-save), sectioning threshold past 5 inputs, settings two-column layout, dedicated-page-not-modal rule for large forms — close with an accessibility pass on field labels, error announcements, and focus order |
 | Banners / toasts / errors / loading states | `reference/alerts.md` | Banner vs Inline vs Toast selection depends on urgency/persistence; color-role semantics (red/yellow/orange/green) are fixed, not decorative |

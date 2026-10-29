@@ -139,7 +139,7 @@ Generic "AI dashboard" tells are not the same as generic "AI landing page" tells
 - **A marketing hero or welcome banner dominating the top fold for a returning user on a working surface.** That space belongs to live state and the next action, not to re-introducing the app to someone who already knows what it does. (This is exactly the Register B-into-A mistake described above, showing up in its most common concrete form.)
 - **A "setup guide" that's cosmetic rather than genuinely sequenced and gated to real installation/data state.** Checkboxes that don't reflect actual completion, or steps presented as optional theater rather than real gating, undermine the merchant's trust in the rest of the UI.
 - **Banners used for standing information that should live in a plain section instead.** Banner-blindness sets in fast; a banner that never goes away stops being read as urgent and starts being read as wallpaper.
-- **Cards used reflexively as the default container even when there's no real elevation or grouping reason.** Nested cards are always wrong. Not every group of related content needs a bordered box; sometimes a heading and a stack are enough.
+- **Sections nested for decoration.** Most content sits in an `s-section` (or a bordered `s-box`). Nesting is for the heading outline, not another border. A heading or plain text needs no container.
 
 Run this list against your section/layout plan before you write a single line of JSX, not after. Catching "this is just a KPI-card grid" at the prose-wireframe stage costs a rewrite of a sentence; catching it after implementation costs a rewrite of a component tree.
 

@@ -28,9 +28,9 @@ These are real mistakes a production app's lint/validator suite catches repeated
 
 Three primitives get reached for constantly, and the most common slop-tell is picking the wrong one because it's the one you remember, not the one the content shape calls for.
 
-**`s-stack`** is for one-dimensional flow: a row or column of things with consistent spacing between them. Reach for it when the content is fundamentally linear: a button group, a label next to a control, a short run of chips, the vertical rhythm inside a card. The research is explicit that for simpler linear layouts you should use stack instead of grid, don't reach for a two-dimensional primitive to solve a one-dimensional problem.
+**`s-stack`** is for one-dimensional flow: a row or column of things with consistent spacing between them. Reach for it when the content is fundamentally linear: a button group, a label next to a control, a short run of chips, the vertical rhythm inside a section. The research is explicit that for simpler linear layouts you should use stack instead of grid, don't reach for a two-dimensional primitive to solve a one-dimensional problem.
 
-**`s-grid`** is for genuinely two-dimensional arrangements: a row of metric tiles, a gallery of template or app cards, a responsive layout that needs to collapse from multiple columns to one at a given container width. Real examples from the App Home patterns: a metrics-card row using `gridTemplateColumns="@container (inline-size <= 400px) 1fr, 1fr auto 1fr auto 1fr"`, a template gallery using `gridTemplateColumns="repeat(auto-fit, minmax(155px, 1fr))"`, and an app-recommendation card internally using `gridTemplateColumns="auto 1fr auto"` to align a thumbnail, text block, and action button on one row. Grid doesn't support subgrid, nested grids are independent and don't inherit track sizing from their parent, so don't design a layout that depends on that.
+**`s-grid`** is for genuinely two-dimensional arrangements: a row of metric tiles, a gallery of template or app cards, a responsive layout that needs to collapse from multiple columns to one at a given container width. Real examples from the App Home patterns: a metrics card row using `gridTemplateColumns="@container (inline-size <= 400px) 1fr, 1fr auto 1fr auto 1fr"`, a template gallery using `gridTemplateColumns="repeat(auto-fit, minmax(155px, 1fr))"`, and an app-recommendation card internally using `gridTemplateColumns="auto 1fr auto"` to align a thumbnail, text block, and action button on one row. Grid doesn't support subgrid, nested grids are independent and don't inherit track sizing from their parent, so don't design a layout that depends on that.
 
 **`s-table`** is for genuine tabular data: multiple records that share the same set of fields, where merchants need to scan, sort, or compare across rows and columns. Use `s-table-header-row` / `s-table-header` (with `listSlot="primary"` for the lead column, `listSlot="labeled"` plus `format="currency"` for typed value columns) / `s-table-body` / `s-table-row` / `s-table-cell`. Once the dataset is large or needs search, filtering, sort, bulk selection, or pagination, don't hand-roll that on top of a bare table, reach for the Index table composition instead, which layers those behaviors on in a Built-for-Shopify-compliant way. Full mechanics of that composition and index-page layout choices belong in this skill's layout reference, not repeated here.
 
@@ -42,6 +42,7 @@ Decision table for the content in front of you:
 | Multiple records with the same fields, need to scan/sort/bulk-act | `s-table`, or the Index table composition for large sets | `s-grid` of cards (loses scannability and kills native sort/bulk actions) |
 | A handful of dissimilar tiles (apps, templates, recommendations) | `s-grid` | `s-table` (forces heterogeneous content into artificial rows) |
 | A short run of controls, labels, or buttons in one direction | `s-stack` | `s-grid` (two-dimensional overkill for one-dimensional content) |
+| A page, list, or table with nothing to show | `s-empty-state` | A hand-built heading, graphic, and button. Filtered-to-zero uses the same component with "clear filters" copy, not onboarding copy |
 | Trend over time, distribution, or proportion | A bespoke SVG or canvas chart (see below) | A table of raw numbers, or a row of stat tiles standing in for an actual trend |
 
 ## Badge and Banner tone semantics
@@ -75,7 +76,7 @@ Decision rule, based on what question the merchant is actually asking:
 When you do build one:
 
 - Keep it inside a plain `s-section`/`s-box` container using the normal padding/border/radius tokens, so the chart's frame reads as native admin chrome even though its interior is fully custom.
-- Give it complete interaction-state coverage like any other custom surface: a loading skeleton shaped like the eventual chart (not a generic spinner), an empty state distinct from a zero-data state, and an error state with an inline retry, not a silent blank.
+- Give it complete interaction-state coverage like any other custom surface: a loading skeleton shaped like the eventual chart (not a generic spinner), an `s-empty-state` when nothing has been created (not a zero series), and an error state with an inline retry, not a silent blank.
 - Treat it as your one signature moment for that page. If you're also inventing a custom empty-state illustration and a bespoke onboarding sequence on the same screen, you've spread the boldness too thin, pick the single place it earns its keep and keep everything else disciplined.
 
 ## Before you ship any of this

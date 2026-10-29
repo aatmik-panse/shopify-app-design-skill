@@ -25,7 +25,7 @@ A Shopify admin page has a fixed anatomy: app icon and name, page title, actions
 </s-page>
 ```
 
-Inside the body, the same one-primary-action rule holds at the container level: a card or section that offers interactivity should have at most one primary-styled button in it (shopify.dev/docs/apps/design/layout). If a card has three buttons, one should read as the obvious next step and the rest should be secondary or tertiary in weight.
+Inside the body, the same one-primary-action rule holds at the container level: a section that offers interactivity should have at most one primary-styled button in it (shopify.dev/docs/apps/design/layout). If it has three buttons, one should read as the obvious next step and the rest should be secondary or tertiary in weight.
 
 Table and index-row actions are a special case: never use primary-styled buttons inside a table row. Use a text button, a minor icon, or a dropdown menu instead (shopify.dev/docs/apps/design/layout). A table full of primary-colored row buttons reads as noise, not hierarchy.
 
@@ -34,62 +34,28 @@ Do / don't for action placement:
 | Do | Don't |
 |---|---|
 | One primary action per page, in the title bar's `primary-action` slot | Two buttons on one screen both styled as primary, or both claiming the same intent |
-| Group secondary actions into a menu once you have more than two or three | Row of five equal-weight buttons across the top of a card |
+| Group secondary actions into a menu once you have more than two or three | Row of five equal-weight buttons across the top of a section |
 | Secondary/text-style actions inside table rows | Primary-colored buttons inside table rows (shopify.dev/docs/apps/design/layout) |
 | Status badge in the header accessory slot | A banner announcing status sitting above the primary action on every visit |
 
-## Section grouping and one/two-column layout
+## Page width and layout patterns
 
-The `s-page` component ships three real layout modes for arranging content within the page: single-column, two-column, and settings (shopify.dev/docs/apps/design/layout). Pick based on what the page actually is, not on habit. Separately, `s-page` also takes an `inlineSize` setting, default-width or full-width, that controls how much horizontal space the page claims. That setting is independent of which of the three layout modes you're using; it's what the "Full-width page" pattern below is actually about, not a fourth peer layout mode alongside single-column, two-column, and settings.
+`s-page` `inlineSize` is `small`, `base` (the default), or `large`. `large` is the wide page, with whitespace. These are widths, not layout modes (shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/page).
 
-**Single-column** is the default. It lets merchants scan top to bottom and focus on one obvious task, and it's the right choice for most homepages in a default-width page (shopify.dev/docs/apps/design/layout).
+How the body is arranged is a pattern on top of that width (shopify.dev/docs/apps/design/layout, shopify.dev/docs/apps/build/app-home/migrate-from-polaris-react/layout):
 
-```
-+-------------------------------------------+
-| Page title            [Primary action]    |
-+-------------------------------------------+
-| Setup guide / banner (if relevant)         |
-+-------------------------------------------+
-| Section: metrics                           |
-+-------------------------------------------+
-| Section: recent activity                   |
-+-------------------------------------------+
-```
+| Situation | Use |
+|---|---|
+| Most homepages | A single column of sections at `inlineSize="base"` |
+| Dashboard | `inlineSize="large"` and an `s-grid` of two or three equal columns |
+| Resource index | `inlineSize="large"`, so a many-column table has room |
+| Supporting sidebar | `slot="aside"` on a direct child of `s-page`. The aside renders only when `inlineSize` is `base`. Keep the primary task in the default slot |
+| Settings | One `s-section` per group, often on `inlineSize="small"`. When a title and description need to sit beside the controls, use an annotation `s-grid` (narrow text column, wider fields) that stacks to one column when narrow |
+| Visual editor with a live preview | Two columns, so the preview stays on screen |
 
-**Two-column** is for visual editors and content-dense pages where the merchant needs to see cause and effect at once, such as an editor with a live preview (shopify.dev/docs/apps/design/layout). It's also the right call when the page genuinely behaves like a dashboard, in which case use two-column equal-width (or three-column for even higher density) rather than forcing a dashboard into a single narrow column.
+`small` is for a focused form. Don't put primary controls in the aside.
 
-```
-+---------------------+---------------------+
-| Editor fields        | Live preview        |
-| (primary/secondary)  |                      |
-+---------------------+---------------------+
-```
-
-**Settings layout** is a thinner left column (title and description) paired with a wider right column (the actual form controls), used so merchants can quickly scan and find the setting they came for (shopify.dev/docs/apps/design/layout).
-
-```
-+-----------------+-----------------------------+
-| Section title     | Form field                  |
-| One-line context  | Form field                  |
-+-----------------+-----------------------------+
-```
-
-**Full-width page** is the `inlineSize="full-width"` setting on `s-page`, used for resource index pages where merchants deal with lists of data that have many columns (shopify.dev/docs/apps/design/layout). It's typically paired with a single-column arrangement of content, most often a table or the Index table pattern, rather than with the two-column or settings arrangement.
-
-The rules that keep these from being interchangeable:
-
-| Situation | Use | Don't |
-|---|---|---|
-| App homepage, no parent/child relationship between sections | Single-column, default width | Two-column primary/secondary layout on the homepage (Built for Shopify design requirements) |
-| Visual editor with real-time preview | Two-column primary/secondary, default width | A single column that hides the preview behind a tab or a scroll |
-| Page behaves as a dashboard | Two-column equal-width, or three-column for higher density | Forcing dashboard content into single-column full-width |
-| Resource index (products, orders, a custom list) | Single-column, full-width | Single-column full-width page for anything that isn't list data, it feels out of place on large displays (shopify.dev/docs/apps/design/layout) |
-| Settings and configuration | Settings layout (thin left, wide right) | A flat single column of unlabeled fields with no grouping |
-| Content that isn't actually editable | Single-column | An "annotated" two-column layout implying editability that isn't there (Built for Shopify changelog) |
-
-Also don't put a two-column layout inside a full-width page. It makes content harder to parse on larger displays (Built for Shopify design requirements changelog), because the columns end up too wide to read comfortably.
-
-Within any of these, the majority of content should live in a container such as a card, since containers create the visual structure and rhythm merchants rely on to parse a page (shopify.dev/docs/apps/design/layout). Headings, simple text, and images don't strictly need to be wrapped, but don't leave paragraphs of body text floating directly on the page background, it hurts legibility and scanning (shopify.dev/docs/apps/design/layout). The inverse failure mode is just as real: nesting a card inside a card inside a section because "container" became the reflexive default rather than a deliberate grouping decision. If two adjacent cards share no real elevation or boundary purpose, they should be one section, not two containers.
+Most content sits in an `s-section`. That is the card-like container; Polaris web components have no card element (shopify.dev/docs/apps/build/app-home/migrate-from-polaris-react, shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/section). Use a bordered `s-box` for a tile that stands alone in a grid (shopify.dev/docs/api/app-home/latest/patterns/templates/homepage). Don't nest sections for decoration: nesting sets the heading outline, and a nested section does not draw its own card. A heading or a line of plain text needs no container of its own (shopify.dev/docs/apps/design/layout).
 
 ## Spacing and density
 
@@ -126,7 +92,7 @@ This is where real design judgment lives in Register A: not new colors or fonts,
 
 Two constraints worth knowing before you lean on this pattern: grid doesn't support subgrid, so a nested grid is independent and won't inherit track sizing from its parent, and inside an `@container` query value, docs examples spell columns out literally (`"1fr 1fr"`) rather than using `repeat()`, so treat `repeat()` inside a container-query value as unverified until you've checked it with `validate_component_codeblocks`. Exact prop names and enum values for `s-grid` / `s-grid-item` belong in `reference/component-patterns.md`, not here.
 
-**Responsive stacking via container queries.** Wrap a grid in `s-query-container` and key the column count to the container's own width, not the viewport, so the same component behaves correctly whether it's rendered full-width or inside a narrower nested layout:
+**Responsive stacking via container queries.** Wrap a grid in `s-query-container` and key the column count to the container's own width, not the viewport, so the same component behaves correctly whether its container is wide or narrow:
 
 ```
 <s-query-container>
@@ -151,7 +117,7 @@ Ground rules for building one:
 
 Illustrations are one of the few places Polaris explicitly invites visual personality: they give the app character and should follow a consistent style to strengthen recognition, as long as that style stays consistent across the app rather than looking like stock art bolted on per screen (shopify.dev/docs/apps/design/visual-design). Low-resolution photos or images read as a lack of care and should be avoided outright (shopify.dev/docs/apps/design/visual-design).
 
-The Empty state composition is the primary place illustration earns its keep: for moments where there's genuinely nothing to show yet, pair a clear explanation of what will eventually appear with a prominent call-to-action, rather than leaving merchants looking at a blank card. Use cases include first-item onboarding, no search or filter results, and feature-activation prompts. An empty state is not the same thing as a filtered-to-zero state, the latter needs a "clear filters" affordance, not onboarding illustration and copy.
+Illustration earns its keep on `s-empty-state`: a clear explanation of what will appear, plus one prominent action, rather than a blank page. A filtered-to-zero result needs "clear filters" copy, not onboarding illustration.
 
 Treat one well-made empty-state illustration (or one well-orchestrated onboarding sequence) as your signature moment for a given surface, the same way a bespoke chart can be. Don't illustrate every empty state, every onboarding step, and every success toast on the same page. Pick the one that matters most to first impressions and invest there.
 

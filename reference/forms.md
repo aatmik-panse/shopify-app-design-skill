@@ -10,15 +10,11 @@ One line, before you write markup: what entity does this form create or edit, is
 
 **One form, one entity, one dedicated page.** Mirror the Shopify admin's own convention: a single page dedicated to editing a single entity (one page for a product, one page for a variant), not a multi-entity form crammed onto one screen (shopify.dev/docs/apps/design/user-experience/forms). This is also why large forms don't belong in modals — modals give merchants a small, capped workspace; a form with real depth needs a full page. Reserve modals for genuinely small, contained interactions (confirm, rename, pick one option), never for a form with more than a handful of fields.
 
-**Grouping threshold: more than five inputs, add structure.** Past five inputs, don't let the form run on as one flat stack. Either:
-- Break it into titled sections inside a single card, or
-- Split it into multiple cards, each with its own header.
-
-Pick sections-in-one-card when the fields are all facets of the same conceptual object (e.g. one product's title, description, and media). Pick multiple cards when the groups are more independent and a merchant might reasonably fill in one and skip another for now (e.g. "Basic details" vs "Search engine listing" vs "Shipping").
+**Grouping threshold: more than five inputs, add structure.** Past five inputs, don't let the form run on as one flat stack. Group fields into sections (`s-section`). One section when the fields are one object (a product's title, description, and media). Separate sections when a merchant might fill one group and skip another ("Basic details" vs "Shipping").
 
 **Spacing comes from the stack primitive, not manual margins.** Use `s-stack` (`direction="block"`, consistent `gap`) to lay out fields vertically with even rhythm — don't hand-space fields with ad hoc padding. See reference/layout-and-visual-design.md for the full spacing/density system and when to go looser vs tighter.
 
-**Settings-style forms get the settings layout.** For configuration/preferences forms specifically (as opposed to "create a new X" forms), use the settings pattern: a thinner left column carrying the section title + one line of description, a wider right column carrying the actual fields. This gives merchants context for *why* a setting exists right next to the control, instead of a bare label. See reference/layout-and-visual-design.md for the full settings-layout treatment.
+**Settings pages.** Group options into sections (`s-section`), often on `inlineSize="small"`. Use an annotation `s-grid` only when a title needs to sit beside its fields. See reference/layout-and-visual-design.md.
 
 **Progressive disclosure for conditional fields.** When a field's presence or meaning depends on an earlier answer, don't show it up front — reveal it only once the earlier field makes it relevant. This is the difference between a long form that overwhelms on load and one that reveals itself as the merchant proceeds (shopify.dev/docs/apps/design/user-experience/forms).
 
@@ -51,20 +47,19 @@ Pick sections-in-one-card when the fields are all facets of the same conceptual 
 
 **Success feedback depends on whether it's instant or not.** If save succeeds immediately with nothing further for the merchant to do, use a toast. If success is delayed, persistent, or comes with a next-step CTA, use a banner instead. Full pattern detail (banner vs inline vs toast, tone, dismissal rules) lives in reference/alerts.md — this file only covers the form-specific slice of that decision.
 
-**Save through the Contextual Save Bar, not a bespoke submit button embedded in the page body.** Wire the form to the Save Bar (`data-save-bar` on the `<form>` element, or the equivalent Save Bar API for your setup) so unsaved-changes UX matches the rest of the admin — merchants get the same "you have unsaved changes, save or discard" affordance everywhere, including inside your app:
+**Save depends on the surface.**
+
+- A page form, and a form inside `s-app-window`, uses `data-save-bar` on that `<form>`. The bar belongs to the window. A save bar on the parent page renders behind it (shopify.dev/docs/api/app-home/latest/app-bridge-web-components/save-bar).
+- `s-modal` puts Save and Cancel in the `primary-action` and `secondary-actions` slots (shopify.dev/docs/api/app-home/latest/web-components/overlays/modal).
+- An admin action extension uses the primary button in `s-admin-action`'s `primary-action` slot (shopify.dev/docs/api/admin-extensions/latest/web-components/settings-and-templates/admin-action).
 
 ```
 <form data-save-bar onSubmit={handleSave} onReset={handleDiscard}>
   <s-section heading="Basic details">
-    <s-stack direction="block" gap="base">
-      <s-text-field label="Title" name="title" value={title} required></s-text-field>
-      <s-text-area label="Description" name="description" value={description} rows={4}></s-text-area>
-    </s-stack>
+    <s-text-field label="Title" name="title" value={title}></s-text-field>
   </s-section>
 </form>
 ```
-
-This matters even for forms that live inside a modal — the Save Bar convention still applies rather than a modal-local "Save" button pretending to be the whole admin's save model.
 
 ## Shopify component selection guide
 
@@ -107,8 +102,8 @@ Don't invent exact enum values (e.g. every valid `tone` on a banner referenced f
 - Don't add a cosmetic "looks validated" green checkmark before real validation has actually run against real data — a checkmark that appears just because a field is non-empty is decoration, not feedback.
 - A form section should have at most one primary-styled action. Don't style both "Save" and some secondary action (e.g. "Preview," "Duplicate") as equally prominent primary buttons — that's the same "two CTAs with the same intent" problem called out for pages generally, applied at the form level.
 - Don't build a "setup wizard" feel into an ordinary edit form by adding fake step indicators or progress bars where there's no actual multi-step sequence — save that pattern for real onboarding flows (see reference/onboarding.md).
-- Don't scatter unrelated settings into one form just because they technically save together on the backend — if merchants conceptually think of them as separate concerns, give them separate cards/sections even if one submit handles both.
+- Don't scatter unrelated settings into one form just because they technically save together on the backend — if merchants conceptually think of them as separate concerns, give them separate sections even if one submit handles both.
 
 ## Handoff
 
-Once the layout and component choices above are decided, hand implementation to the shopify-polaris-app-home or shopify-polaris-admin-extensions marketplace skill (whichever surface applies) for exact prop names, enum values, and codegen — those skills run the mandatory search-then-validate loop this file intentionally does not duplicate. Before shipping any `s-*` markup for a form, run it through `validate_component_codeblocks`. For the full alert/banner/toast vocabulary referenced above for success and page-level errors, see reference/alerts.md. For overall page structure this form sits inside (single-column vs settings vs two-column), see reference/layout-and-visual-design.md.
+Once the layout and component choices above are decided, hand implementation to the shopify-polaris-app-home or shopify-polaris-admin-extensions marketplace skill (whichever surface applies) for exact prop names, enum values, and codegen — those skills run the mandatory search-then-validate loop this file intentionally does not duplicate. Before shipping any `s-*` markup for a form, run it through `validate_component_codeblocks`. For the full alert/banner/toast vocabulary referenced above for success and page-level errors, see reference/alerts.md. For the page width and layout patterns this form sits inside, see reference/layout-and-visual-design.md.

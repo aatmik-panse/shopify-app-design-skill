@@ -40,7 +40,7 @@ This is the umbrella "good faith effort" requirement. Reviewers catch violations
 | Check | Fail looks like |
 |---|---|
 | UI stability | Flickering, content repeatedly loading in/out, layout that shifts excessively as data arrives |
-| Containers | Most content lives outside card-like containers (see reference/layout-and-visual-design.md for container guidance) |
+| Containers | Most content sits outside an `s-section` (or a bordered `s-box`). That section is the card-like container (see reference/layout-and-visual-design.md) |
 | Button color | Primary buttons in green, purple, or any color that isn't the Polaris primary action color |
 | Typography | A serif or script font used for the majority of content |
 | Body text size | Noticeably different from Shopify Admin's own body text size |
@@ -73,7 +73,7 @@ This is the umbrella "good faith effort" requirement. Reviewers catch violations
 - [ ] Tabs are used sparingly, only for secondary navigation when the nav menu genuinely isn't sufficient. Same tab rules as above: never wrap, never move position, never change content above the tabs.
 
 ### 4.1.5 Use the contextual save bar
-- [ ] Forms are saved through the App Bridge Contextual Save Bar (CSB), including forms that live inside app windows/modals, not a bespoke save button pattern.
+- [ ] Page forms, including a form inside `s-app-window`, save through the App Bridge Contextual Save Bar (`data-save-bar`), not a bespoke save button. An `s-modal` uses its action slots (4.1.6), not the save bar.
 - [ ] Merchants can't navigate away from unsaved changes without hitting the CSB's Save or Discard action.
 - [ ] No continuous/auto-save-as-you-type validation standing in for the CSB — this reads as "incongruous with standard Admin save UX" per the source doc (detail in reference/forms.md).
 
